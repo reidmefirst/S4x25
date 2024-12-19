@@ -1,2 +1,3 @@
 # S4x25Talk
-S4x25 talk about writing better IDS signatures for industrial protocols
+
+PCAPs and IDS rules that highlight some of the IDS 'gotchas' and tricks for dealing with common ICS protocol features.
