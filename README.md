@@ -4,16 +4,10 @@ PCAPs and IDS rules that highlight some of the IDS 'gotchas' and tricks for deal
 
 I break this down into a number of example cases:
 
-Example1: Modbus protocol which uses protocol pipelining. This is an example of how /not/ to do things: We write a bad IDS signature. It will detect one attack, but not the other (because the second attack pcap uses protocol pipelining to hide itself)
+Lesson 1: Flow. This covers how to use the 'flow' keyword and why you may experience false positives from network clients that just so happen to get assigned a port similar to an ICS protocol.
 
-Example2: Modbus pipelining using the preprocessor. In this case, we run the same PCAPs as Example 1, but we alert on both of them. This demonstrates how useful protocol preprocessors can be!
+Lesson 2: Pipelining. This shows what protocol pipelining looks like using a PCAP of a real live PLC. It shows how bad detections are often done against ICS protocols, and how to use preprocessors and generic pipelining detection rules to augment your rulset.
 
-Example3: Enip Pipelining. Just like our Modbus example, this is a Bad Signature that can be evaded, along with the accompanying PCAPs. Note that I show a few ways of pipelining requests in the PCAP, just to drive home the point of how difficult it is to write a signature using simple content matches (or even PCRE).
+Lesson 3: We don't talk about Lesson 3, because there isn't enough time this year.
 
-Example 4: Enip Pipelining using the preprocessor. Note that the CIP preprocessors for Suricata and Snort3 differ quite a bit, this highlights some of the differences.
-
-Example 5: Modbus pipelining detection -- pipeline detection only. This shows how to detect that pipelining is being used (but, it can't do deep packet inspection of the pipelined request). There are several requests here, some with up to 25 pipelined requests in a single TCP packet, to highlight how difficult it is to detect the actual attack using simple content and PCRE matching.
-
-Example 6: Modbus datasets. We show how to assign a device to a dataset, and to later detect an attack against the device because it belongs to the dataset of 'insecure by design' devices.
-
-If you have questions about the 
+Lesson 4: Datasets. This covers how to use Suricata datasets as a form of asset management. We can identify devices with an insecure-by-design feature, add that device to a dataset. Later, we can look for malicious activity which only applies to devices previously identified as insecure-by-design. We use a contrived protocol in this example, but it can be extended to things such as Modbus, ENIP, or other protocols.
