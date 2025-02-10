@@ -1,0 +1,18 @@
+# these rules show the use of the modbus preprocessor (also called an 'inspector') for snort3
+# snort 
+# this comment out rule is pretty basic and just looks for a modbus write register command
+# alert modbus any any -> any 502 (modbus_func: 6; msg:"Detected modbus write single register"; sid:6; rev:1; )
+# alert modbus any any -> any 502 (modbus_func: 16; msg:"Detect modbus write multiple registers"; sid:16; rev:1; )
+
+# a downside of snort3 is that modbus only has three fields: 'modbus_func', 'unit_id', and 'modbus_data'.
+# so if we want to look for access to a specific register, we have to carve out bytes, like this rule which looks for
+# a write to register 40000 (integer value 39999 on-the-wire)
+alert modbus any any -> any 502 (modbus_func: 6; modbus_data; content:"|9c 3f|", offset 0, depth 2; msg:"Detected modbus write to register 40000"; sid:5; rev:1; )
+
+# a trouble we talked about at S4 was that you can have a so-called double-evasion: where we use a pipeline request, and
+# the actual write, writes to multiple registers, one of which we care about.
+# such a rule is more difficult to manage. the theory here is this: we extract the starting register. it the starting register
+# is less than 40000, we then extract a new value (the 'register count' field).
+# i actually couldn't think up a way to do this in snort3 due to limitations in the rule language. i think you really need
+# something like 'var_test' and 'var_math' in a rule language to achieve what I want.
+#alert modbus any any -> any 502 (modbus_func:16; modbus_data; byte_extract:; byte_math:; byte_test:
