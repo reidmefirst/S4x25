@@ -21,7 +21,7 @@ The challenge consists of two components:
 - simulator_server.py
 
 `simulator_server.py` is a simulated safety controller. It binds a listening port to localhost:44819
-`circuitproxy_2025.py` is a firewall service. It binds to all network interfaces, on 0.0.0.0:44818. It will accept a limited set ENIP requests, and will decide whether to answer those requests itself, or if it should forward those requests on to the target PLC.
+`circuitproxy.py` is a firewall service. It binds to all network interfaces, on 0.0.0.0:44818. It will accept a limited set ENIP requests, and will decide whether to answer those requests itself, or if it should forward those requests on to the target PLC.
 ## Goal
 
 Your goal is to read out the simulator_server's serial number, proving that you bypassed the firewall.
