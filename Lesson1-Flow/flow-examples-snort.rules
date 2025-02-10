@@ -1,0 +1,14 @@
+#
+# the rule below represents a 'bad' approach to ICS protocols.
+# because it lacks a 'flow' keyword, the rule may match otherwise benign
+# traffic that is destined for a TCP client (which is probably not even
+# using the Ethernet/IP protocol)
+
+alert tcp any any -> any 44818 (msg:"Ethernet/IP Open Connected Session (not necessarily dangerous, unless someone new is doing it)"; content:"|6f 00|",offset:0,depth:2; sid:1; rev:1; )
+
+# the rule below represents a better approach.
+# by adding the 'flow' keyword, it will only detect the offending packet
+# when it is destined for a server that is listening on tcp/44818.
+# this is much more likely to be an Ethernet/IP device.
+
+alert tcp any any -> any 44818 (flow:to_server; msg:"Ethernet/IP Open Connected Session (not necessarily dangerous, unless someone new is doing it)"; content:"|6f 00|",offset:0,depth;2; sid:2; rev:1; )
