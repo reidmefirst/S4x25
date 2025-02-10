@@ -1,0 +1,2 @@
+alert tcp any 1234 -> any any (msg:"identifies an ACME WIDGET"; flow:from_server; content:"ACME"; startswith; ip.src; dataset:set,acmewidgets,type ipv4,load acmewidgets.list; sid:8888888; rev:1;) 
+alert tcp any any -> any 1234 (msg:"identifies an attack against an ACME WIDGET"; flow:to_server; content:"EVIL"; startswith; ip.dst; dataset:isset,acmewidgets,type ipv4; sid:7777777; rev:1;)
