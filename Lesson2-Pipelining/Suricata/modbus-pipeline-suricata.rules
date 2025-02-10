@@ -1,0 +1,13 @@
+# the rule here will check if a Modbus/TCP request *might* have a pipelined request
+# note that there are other possibilities: it could be a malformed request, where someone is trying to trigger a buffer overflow
+# it is always possible that this isn't Modbus at all (stranger things have hapenned).
+# the only real way we have to determine that a request is Modbus, without use of the preprocessor, is to check if 
+# the two bytes at offset 2 are 0x0000 (this is the Protocol ID field per the modbus/tcp specification)
+# unfortunately, pretty much everything else in a modbus packet can be any value: transaction id, function code, and register offsets
+# how it works:
+# we use byte_math. We extract 2 bytes (the length field), immediately after the protocol ID. the extracted bytes are big-endian (the default for byte_math)
+# we then add 6 to the result, since the length does not include any header fields. the astute reader will notice that we should
+# probably add less than 6 to this resultant value, since we are checking if there is any data 'relative' to the protocol id match
+# basically: we are looking to see if there is a pipeline request that, at minimum, has bytes up to the pipeline'd 'protocol id' field
+alert tcp any any -> any 502 (msg:"Modbus/TCP pipeline/overflow detection byte_math only"; content:"|00 00|"; offset:2; depth:2; byte_math:bytes 2,offset 0,oper +,rvalue 6, result mblength,relative; isdataat:mblength,relative; sid:5555555; rev:1; )
+

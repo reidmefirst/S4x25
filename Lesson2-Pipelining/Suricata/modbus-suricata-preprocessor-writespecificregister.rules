@@ -1,0 +1,13 @@
+# this rule shows how to use suricata's modbus preprocessor to look for a 'write' to a specific register.
+# a few notes:
+# 1: when you look at the pcap with wireshark, wireshark will display a /technically incorrect/ register number
+# the modbus specification starts register addresses at 1 (which is written as 0x0000 on the wire)
+# for whatever reason, wireshark decides to display it incorrectly; suricata uses the modbus specification
+# mechanism, which is correct for engineers but may be confusing for people familiar with protocols but
+# not familiar with the idiosyncracies of industrial protocols
+# 2: this rule will match for any write to this register. you may want to couple this rule with datasets:
+# that is, check that the target IP address of this request is in the dataset of hosts known to have issues
+# with this particular register.
+# Remember that you can either write a rule to add the device to the dataset, or you can use suricata's socket
+# access to manually add addresses to the dataset of vulnerable devices.
+alert modbus any any -> any 502 (msg:"dangerous write to address 40000"; modbus: access write, address 40000; sid:88888888; rev:1; )
