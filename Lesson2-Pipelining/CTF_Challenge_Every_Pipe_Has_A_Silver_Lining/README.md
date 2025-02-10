@@ -17,7 +17,7 @@ You will need the following python packages installed:
 ## Components
 
 The challenge consists of two components:
-- circuitproxy_2025.py
+- circuitproxy.py
 - simulator_server.py
 
 `simulator_server.py` is a simulated safety controller. It binds a listening port to localhost:44819
