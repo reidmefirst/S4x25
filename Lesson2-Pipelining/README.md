@@ -13,13 +13,18 @@ This concept has carried over and is generally implemented in every industrial d
 
 ## About the PCAPs
 
-### Modbus-pipeline.pcapng
+### modbus-requests-with-pipelined-write.pcapng
 I've included a PCAP of a Modbus/TCP session that uses request pipelining.
 
 I highly encourage you to look at the PCAP in Wireshark.
 
 In this example, the client issues a Read Register request to read out register 40000 from a PLC (Note: if you look at the PCAP in wireshark it'll say register 39999...that's because Modbus registers start at '1' (engineering speak) for '0' (on the wire). Thus, register 40000 (according to an engineer, and according to suricata) is encoded as 39999 (on the wire)). 
+### modbus-requests-with-pipelined-write-using-write-multiple-registers.pcapng
+Again, I highly recommend checking out this PCAP in wireshark.
 
+In this case, we write multiple registers beginning with register 39999 and including register 40000. (again, as above, note that Wireshark has an off-by-one in the display: integer 39998 == register number 39999, and integer 39999 == register number 40000).
+
+In this case, the suricata preprocessor handles the pcap and will correctly flag it as a write to register 40000. Writing a snort rule to detect this becomes tricky, though, we realize: since Snort3 only has the `modbus_data` keyword, it is up to us to write some logic that can 1) extract the starting register, 2) add the register count, and finally 3) determine if the target register resides in between the starting register and the ending register. So far, this does seem possible with any of the Snort3 logic verbs, but I would love it someone would correct me...
 ### Ethernet/IP 'Shallow Packet Inspection'
 I've also included the S4x19 and 2021 SANS ICS CTF 'PipeDream' (sorry for the name, I used it for the challenge before we used it to denote a piece of malware) challenge.
 
